@@ -3,7 +3,20 @@
 // @namespace      http://www.google.com/
 // @description    Enhance Ken Powers' excellent brewer's recipe calculator.
 // @include        http://powersbrewery.home.comcast.net/~powersbrewery/mastercalculator.html
+// @author         Bill Skellenger
+// @email          skellenger.net@williamj
 // ==/UserScript==
+
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details:
+// <http://www.gnu.org/licenses/gpl.txt>
 
 // Unit conversions
 var ms_day = 1000 * 60 * 60 * 24;
