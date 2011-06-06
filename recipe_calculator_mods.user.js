@@ -24,6 +24,11 @@ var oz_qt = 32;
 var qt_gal = 4;
 var cuin_gal = 0.004329;
 
+// SG/BRIX conversion tables
+// From:  http://www.fermsoft.com/gravbrix.php
+sg_tab =   [0, 1.00, 1.01, 1.02, 1.03, 1.04, 1.05, 1.06, 1.07, 1.08, 1.09, 1.10, 1.11, 1.12, 1.13];
+brix_tab = [0, 0.00, 2.56, 5.08, 7.55, 9.98, 12.37, 14.72, 17.03, 19.31, 21.54, 23.75, 25.91, 28.05, 30.15];
+
 // constants
 var hlt_diam_in = (20 + (5/16));
 var boil_diam_in = 19.8125;
@@ -58,7 +63,6 @@ var GRAIN_LBS;
 var SPARGE_GALS;
 var SPARGE_INCHES;
 var MASH_TEMP_F;
-
 
 // Colormap discovered @ http://www.franklinbrew.org/brewinfo/colorchart.html
 // (Allegedly pulled from ProMash)
@@ -194,6 +198,41 @@ function remove(element) {
    element.parentNode.removeChild(element);
 }
 
+// Skellenger:
+// Given two x,y data pairs, return a corresponding
+// y value when given x
+function interpol(xa,ya,xb,yb,x) {
+   return (ya + ((x-xa)*(yb-ya)/(xb-xa)));
+}
+
+function getIndexOf(array, val) {
+   var index = array.indexOf(val);
+   var i = 0;
+   if (index == -1) {
+      /* did not find the value, so find the nearest value */
+      for (num in array) {
+         if (array[num] > val) 
+            break;
+         else
+            i++;
+      }
+      index = i-1;
+   }
+   return index;
+}
+
+function getBrixFromSG(sgval) {
+   idx = getIndexOf(sg_tab, sgval);
+   brixval = interpol( sg_tab[idx], brix_tab[idx], sg_tab[idx+1], brix_tab[idx+1], sgval);
+   return brixval;
+}
+
+function getSGFromBrix(brixval) {
+   idx = getIndexOf(brix_tab, brixval);
+   brixval = interpol( brix_tab[idx], sg_tab[idx], brix_tab[idx+1], sg_tab[idx+1], brixval);
+   return brixval;
+}
+
 /* keyHandler function from Gmail Macros script,
  * written by Mihai Parparita (mihai@persistent.info) */
 function keyHandler(event) {
@@ -289,6 +328,16 @@ function writeStrikeInGals() {
 function writeBoilInches() {
    var inpBOILWAT = frmMash.elements.namedItem("PREBOIL");
    inpBOILWAT.nextSibling.textContent = "gal  (" + BOIL_INCHES + " BOIL inches)";
+}
+
+function writePredictedGravInBrix() {
+   var inpPREDGRAV = frmMash.elements.namedItem("GRAV");
+   inpPREDGRAV.parentNode.nextSibling.textContent = getBrixFromSG(inpPREDGRAV.value).toFixed(2) + " Brix";
+}
+
+function writeActualGravInBrix() {
+   var inpACTGRAV = frmMash.elements.namedItem("ACTGRAV");
+   inpACTGRAV.parentNode.nextSibling.textContent = getBrixFromSG(inpACTGRAV.value).toFixed(2) + " Brix";
 }
 
 function insertTotalMashVolume() {
@@ -712,13 +761,15 @@ function main() {
    unsafeWindow.CalculateAll = function() {
       var oldreturn = oldCalculateAll();
       initGlobalVariables();
-      writeStrikeInGals();     /* add strike water in gals */
+      writeStrikeInGals();         /* add strike water in gals */
       if (SHOW_BOIL_INCHES) { writeBoilInches(); }   /* add boil inches */
-      writeTotalMashVolume();  /* calculate total mash volume required */
-      updateColorSwatch();     /* use HTML for beer color */
-      updateDayCounts();       /* calculate number of days */
-      updateTitle();           /* update the window title */
-      //updateGoogInput();       /* update Google box */
+      writePredictedGravInBrix();  /* write predicted OG in brix */
+      writeActualGravInBrix();     /* write actual OG in brix */
+      writeTotalMashVolume();      /* calculate total mash volume required */
+      updateColorSwatch();         /* use HTML for beer color */
+      updateDayCounts();           /* calculate number of days */
+      updateTitle();               /* update the window title */
+      //updateGoogInput();         /* update Google box */
       if (USE_SUMMARY_PANEL) { updateSummaryPanel(); }
       return oldreturn;
    };
