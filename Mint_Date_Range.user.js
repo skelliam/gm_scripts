@@ -37,18 +37,41 @@ function updateURL() {
    //whenever a date is changed, validate the dates and update the URL
    var searchstring = "";
 
-   //update URL
-   searchstring += "?startDate=" + String(jStartDate.val());
-   searchstring += "&endDate=" + String(jEndDate.val());
+   startdateval = jStartDate.val();
+   enddateval = jEndDate.val();
+
+   startdate = Date.parse(startdateval);
+   enddate = Date.parse(enddateval);
+
+   if (    (startdateval == "") 
+        || (enddateval == "")
+        || (startdateval == null)
+        || (enddateval == null) 
+      ) 
+   {  /* either date blank */
+      return;
+   }
+   else if (enddate < startdate) {
+      alert("End date is before start date.");
+      return;
+   }
+   else if (startdate > enddate) {
+      alert("Start date is after end date.");
+      return;
+   }
+
+   //everything good up until now -- let's update the URL
+   searchstring += "?startDate=" + startdate.toString('MM/dd/yyyy');
+   searchstring += "&endDate=" + enddate.toString('MM/dd/yyyy');
    document.location.search = searchstring;
 }
 
-function dateChanged(jObj) {
+function validateDate(jObj) {
    var date = Date.parse(jObj.val());
 
    if (date != null) {
       jObj.css("background-color", "#DEEFE9");  //this is the Mint background color :)
-      jObj.prop('title', "Date OK: " + date);
+      jObj.prop('title', "Date OK: " + date.toString('dddd, MMMM d, yyyy'));
    }
    else {
       if (jObj.val()=="") {
@@ -60,14 +83,16 @@ function dateChanged(jObj) {
          jObj.prop('title', "Invalid date, please fix me.");
       }
    }
+
+   updateURL();  /* update the URL with dates */
 }
 
 function startDateChanged() {
-   dateChanged(jStartDate);
+   validateDate(jStartDate);
 }
 
 function endDateChanged() {
-   dateChanged(jEndDate);
+   validateDate(jEndDate);
 }
 
 
@@ -75,23 +100,10 @@ function insertDatePickers() {
    //create the date pickers (jQuery syntax)
    //jStartDate = $("<input class='di' value='1/1/2012' type='text' name='startdate' title='Enter start date format: mm/dd/yyyy'/>");   
    //jEndDate = $("<input class='di' value='12/31/2012' type='text' name='enddate' title='Enter end date format: mm/dd/yyyy'/>");   
+
    jStartDate = $("<input class='di' id='startdate' title='Enter a date.'/>");   
    jEndDate = $("<input class='di' id='enddate' title='Enter a date.'/>");   
-
-   //$('<b>Start Date:</b>').appendTo('.search-container');
-
-   /* ----
-   $('<input>').attr({
-      type:'text',
-      class: 'di',
-   }).appendTo('.search-container');
-
-   $('<b>Start Date:</b>').appendTo('.search-container');
-
-   $('<input>').attr({
-   }).appendTo('.search-container');
-   ---- */
-
+   
    //add onchange events with jQuery syntax
    jStartDate.change(startDateChanged);
    jEndDate.change(endDateChanged);
