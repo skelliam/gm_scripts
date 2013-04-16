@@ -5,7 +5,7 @@
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require     http://raw.github.com/skelliam/Datejs/next/build/date-en-US.js
 // @include     https://wwws.mint.com/transaction.event*
-// @grant
+// @grant       GM_addStyle
 // @version     1
 // ==/UserScript==
 
