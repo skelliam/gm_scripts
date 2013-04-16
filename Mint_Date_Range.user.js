@@ -2,8 +2,8 @@
 // @name        Mint Date Range
 // @namespace   http://leftbraintinkering.blogspot.com/
 // @description Query by date range in Mint
-// @require       http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
-// @require       http://raw.github.com/skelliam/Datejs/next/build/date-en-US.js
+// @require     http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
+// @require     http://raw.github.com/skelliam/Datejs/next/build/date-en-US.js
 // @include     https://wwws.mint.com/transaction.event*
 // @grant
 // @version     1
@@ -19,6 +19,7 @@
 var jStartDate = null;
 var jEndDate = null;
 var clrMintGreen = "#DEEFE9";
+var clrMintDarkGreen = "#00C44B";
 var clrPink = "#F9DEDE";
 var clrWhite = "#FFFFFF";
 
@@ -29,6 +30,20 @@ var cssText =
   "  font-size: 0.9em;\n" +
   "  height: 0.9em;" +
   "  width: 6em;" +
+  "}\n\n" +
+
+  "a.dibtn {\n" +
+  "  font-weight: bold;" +
+  "  background-color: " + clrMintDarkGreen + ";\n" +
+  "  border: 1px;" +
+  "  width: 0.9em;" +
+  "  border-radius: 3px 3px 3px 3px;" +
+  "  border-style: outset;" +
+  "  border-width: 1px;" +
+  "  border-color: black;" +
+  "  color: white;" +
+  "  cursor: pointer;" +
+  "  text-decoration: none;" +
   "}\n\n" +
 
   "div#account-summary {\n" +
@@ -44,7 +59,7 @@ function updateURL(startdate, enddate) {
    document.location.search = searchstring;
 }
 
-function validateAndUpdate() {
+function validateAndUpdateURL() {
    //whenever a date is changed, validate the dates and update the URL
 
    var startdateval = jStartDate.val();
@@ -101,10 +116,6 @@ function validateDate(jObj, update) {
          jObj.prop('title', "Invalid date, please fix me.");
       }
    }
-
-   if (update == true) {
-      validateAndUpdate();  /* update the URL with dates */
-   }
 }
 
 function startDateChanged() {
@@ -116,20 +127,20 @@ function endDateChanged() {
 }
 
 
-function insertDatePickers() {
+function updateUI() {
    //create the date pickers (jQuery syntax)
-   //jStartDate = $("<input class='di' value='1/1/2012' type='text' name='startdate' title='Enter start date format: mm/dd/yyyy'/>");   
-   //jEndDate = $("<input class='di' value='12/31/2012' type='text' name='enddate' title='Enter end date format: mm/dd/yyyy'/>");   
-
    jStartDate = $("<input class='di' id='startdate' title='Enter a date.'/>");   
    jEndDate = $("<input class='di' id='enddate' title='Enter a date.'/>");   
+   jGoBtn = $("<a class='di dibtn'>Go</a>");
    
-   //add onchange events with jQuery syntax
+   //add events with jQuery syntax
    jStartDate.change(startDateChanged);
    jEndDate.change(endDateChanged);
+   jGoBtn.click(validateAndUpdateURL);
+
 
    //find class="search-container" (jQuery syntax) and insert date fields
-   $(".search-container").append("<b>Start Date: </b>", jStartDate, "<b>End Date: </b>", jEndDate);
+   $(".search-container").append("<b>Start Date: </b>", jStartDate, "<b>End Date: </b>", jEndDate, jGoBtn);
 }
 
 function fillDatePickers() {
@@ -169,7 +180,7 @@ function main() {
    }
 
    GM_addStyle( cssText );
-   insertDatePickers();
+   updateUI();
    fillDatePickers();
 }
 
