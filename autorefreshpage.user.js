@@ -58,7 +58,7 @@ function insertSummaryPanel() {
    document.body.appendChild(summarypaneldiv);
 }
 
-function updateSummaryPanel(timeonly) {
+function updateSummaryPanel() {
    var summarypanel = document.getElementById("summarypanel");
    var summarypaneltext = document.getElementById("summarypaneltext");
    var summarypanelbg = document.getElementById("summarypanelbg");
@@ -73,8 +73,6 @@ function updateSummaryPanel(timeonly) {
    /* https://developer.mozilla.org/en/Useful_CSS_tips/Color_and_Background */
    var rect = summarypanel.getBoundingClientRect();
    console.log(summarypanelbg);
-//   summarypanelbg.style.setAttribute('width', rect.width);
-//   summarypanelbg.style.setAttribute('height', rect.height);
    summarypanelbg.style.width = String(rect.width) + 'px';
    summarypanelbg.style.height = String(rect.height) + 'px';
 }
